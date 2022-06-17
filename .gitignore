@@ -1,3 +1,7 @@
 /node_modules
+/.vscode
+/dist
 token.txt
 package-lock.json
+dicks.json
+index.js
