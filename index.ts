@@ -114,6 +114,10 @@ bot.on('text', async (ctx) => {
 			await ctx.telegram.sendMessage(ctx.chat.id, "Кількість см неправильна.", { reply_to_message_id: ctx.message.message_id })
 			return
 		}
+		if (count <= 0) {
+			await ctx.telegram.sendMessage(ctx.chat.id, "Матір в канаві...", { reply_to_message_id: ctx.message.message_id })
+			return
+		}
 		const json_text = fs.readFileSync('./dicks.json', { encoding: 'utf8', flag: 'r' })
 		let dick_data: DickData = JSON.parse(json_text)
 		let initiator_data = dick_data.dicks.find((dick_record) => { return dick_record.user_id == ctx.message.from.id })
