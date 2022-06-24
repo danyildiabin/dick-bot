@@ -17,14 +17,13 @@ type DickData = {
 }
 
 bot.on('text', async (ctx) => {
-	const bot_user = await bot.telegram.getMe()
 	// Commands processing
-	if (ctx.message.text.startsWith("/help@" + bot_user.username)) {
+	if (ctx.message.text.startsWith("/help@" + ctx.botInfo.username)) {
 		const help_message = fs.readFileSync('./help.md', { encoding: 'utf8', flag: 'r' })
 		await ctx.telegram.sendMessage(ctx.chat.id, help_message, { parse_mode: "MarkdownV2" })
 		return
 	}
-	if (ctx.message.text.startsWith("/dick@" + bot_user.username)) {
+	if (ctx.message.text.startsWith("/dick@" + ctx.botInfo.username)) {
 		const json_text = fs.readFileSync('./dicks.json', { encoding: 'utf8', flag: 'r' })
 		let dick_data: DickData = JSON.parse(json_text)
 		let author_data = dick_data.dicks.find((dick_record) => { return dick_record.user_id == ctx.message.from.id })
@@ -98,7 +97,7 @@ bot.on('text', async (ctx) => {
 		}
 		if (ctx.message.reply_to_message.from == undefined) {
 			console.log("message replying to has undefied sender");
-			await ctx.telegram.sendMessage(ctx.chat.id, "Сталась помилка. Збережено для аналізу", { reply_to_message_id: ctx.message.message_id })
+			await ctx.telegram.sendMessage(ctx.chat.id, "Сталась помилка. Збережено для розробника", { reply_to_message_id: ctx.message.message_id })
 			return
 		}
 		if (ctx.message.reply_to_message.from?.id == ctx.message.from.id) {
@@ -111,7 +110,10 @@ bot.on('text', async (ctx) => {
 		}
 		const words = get_lowercase_words(ctx.message.text)
 		const count = parseInt(words[1], 10)
-		if (isNaN(count)) await ctx.telegram.sendMessage(ctx.chat.id, "Кількість см неправильна.", { reply_to_message_id: ctx.message.message_id })
+		if (isNaN(count)) {
+			await ctx.telegram.sendMessage(ctx.chat.id, "Кількість см неправильна.", { reply_to_message_id: ctx.message.message_id })
+			return
+		}
 		const json_text = fs.readFileSync('./dicks.json', { encoding: 'utf8', flag: 'r' })
 		let dick_data: DickData = JSON.parse(json_text)
 		let initiator_data = dick_data.dicks.find((dick_record) => { return dick_record.user_id == ctx.message.from.id })
@@ -147,7 +149,7 @@ bot.on('text', async (ctx) => {
 		return
 	}
 
-	if (ctx.message.text.startsWith("/top@" + bot_user.username)) {
+	if (ctx.message.text.startsWith("/top@" + ctx.botInfo.username)) {
 		const json_text = fs.readFileSync('./dicks.json', { encoding: 'utf8', flag: 'r' })
 		let dick_data: DickData = JSON.parse(json_text)
 		dick_data.dicks.sort((dick_record_a, dick_record_b): number => {
